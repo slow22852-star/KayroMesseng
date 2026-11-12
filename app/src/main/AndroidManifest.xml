@@ -7,6 +7,7 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@drawable/kayromess_launcher"
         android:label="KayroMess"
         android:supportsRtl="true"
         android:usesCleartextTraffic="false"
