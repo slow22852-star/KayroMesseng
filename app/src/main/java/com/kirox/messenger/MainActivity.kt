@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,8 +20,8 @@ import androidx.compose.ui.unit.sp
 
 private val Background = Color(0xFF10131B)
 private val CardColor = Color(0xFF1B202B)
-private val Accent = Color(0xFF7665F5)
-private val MainText = Color(0xFFFFFFFF)
+private val Accent = Color(0xFF7658E8)
+private val MainText = Color.White
 private val SecondaryText = Color(0xFF929AAA)
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MessengerApp()
+            KayroMessApp()
         }
     }
 }
@@ -38,18 +37,17 @@ class MainActivity : ComponentActivity() {
 data class Chat(
     val name: String,
     val message: String,
-    val time: String,
-    val unread: Int
+    val time: String
 )
 
 @Composable
-fun MessengerApp() {
+fun KayroMessApp() {
     var selectedTab by remember { mutableStateOf("Чаты") }
 
     val chats = listOf(
-        Chat("Kirox Support", "Добро пожаловать!", "12:30", 1),
-        Chat("Избранное", "Сохранённые сообщения", "11:45", 0),
-        Chat("Объявления", "Новости мессенджера", "Вчера", 0)
+        Chat("KayroMess Support", "Добро пожаловать!", "12:30"),
+        Chat("Избранное", "Сохранённые сообщения", "11:45"),
+        Chat("Объявления", "Новости KayroMess", "Вчера")
     )
 
     Column(
@@ -57,23 +55,18 @@ fun MessengerApp() {
             .fillMaxSize()
             .background(Background)
     ) {
-
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = "Kirox",
+                "KayroMess",
                 color = MainText,
-                fontSize = 30.sp,
+                fontSize = 29.sp,
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(5.dp))
-
             Text(
-                text = "Твой мир общения",
+                "Общение без границ",
                 color = SecondaryText,
                 fontSize = 14.sp
             )
@@ -81,27 +74,13 @@ fun MessengerApp() {
 
         HorizontalDivider(color = CardColor)
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = selectedTab,
-                color = MainText,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "Поиск",
-                color = Accent,
-                fontSize = 14.sp
-            )
-        }
+        Text(
+            selectedTab,
+            color = MainText,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(18.dp)
+        )
 
         when (selectedTab) {
             "Чаты" -> {
@@ -109,16 +88,67 @@ fun MessengerApp() {
                     modifier = Modifier.weight(1f)
                 ) {
                     items(chats) { chat ->
-                        ChatItem(chat)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { }
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .background(Accent, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    chat.name.first().toString(),
+                                    color = Color.White,
+                                    fontSize = 22.sp
+                                )
+                            }
+
+                            Spacer(Modifier.width(14.dp))
+
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    chat.name,
+                                    color = MainText,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(
+                                    chat.message,
+                                    color = SecondaryText,
+                                    fontSize = 13.sp
+                                )
+                            }
+
+                            Text(
+                                chat.time,
+                                color = SecondaryText,
+                                fontSize = 11.sp
+                            )
+                        }
+
+                        HorizontalDivider(color = CardColor)
                     }
                 }
             }
 
-            "Контакты" -> EmptySection("Контакты")
-
-            "Каналы" -> EmptySection("Каналы")
-
-            "Профиль" -> EmptySection("Профиль")
+            else -> {
+                Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "$selectedTab появятся здесь",
+                        color = SecondaryText
+                    )
+                }
+            }
         }
 
         HorizontalDivider(color = CardColor)
@@ -128,116 +158,21 @@ fun MessengerApp() {
                 .fillMaxWidth()
                 .background(CardColor)
                 .navigationBarsPadding()
-                .padding(vertical = 14.dp),
+                .padding(vertical = 18.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            listOf("Чаты", "Контакты", "Каналы", "Профиль").forEach { tab ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable {
-                        selectedTab = tab
-                    }
-                ) {
+            listOf("Чаты", "Контакты", "Каналы", "Профиль")
+                .forEach { tab ->
                     Text(
-                        text = tab,
-                        color = if (selectedTab == tab) Accent else SecondaryText,
-                        fontSize = 13.sp,
-                        fontWeight = if (selectedTab == tab)
-                            FontWeight.Bold else FontWeight.Normal
+                        tab,
+                        color = if (selectedTab == tab)
+                            Accent else SecondaryText,
+                        modifier = Modifier.clickable {
+                            selectedTab = tab
+                        },
+                        fontSize = 12.sp
                     )
                 }
-            }
         }
-    }
-}
-
-@Composable
-fun ChatItem(chat: Chat) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(52.dp)
-                .background(Accent, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = chat.name.first().toString(),
-                color = Color.White,
-                fontSize = 21.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.width(13.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = chat.name,
-                color = MainText,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = chat.message,
-                color = SecondaryText,
-                fontSize = 13.sp
-            )
-        }
-
-        Column(
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = chat.time,
-                color = SecondaryText,
-                fontSize = 11.sp
-            )
-
-            if (chat.unread > 0) {
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Box(
-                    modifier = Modifier
-                        .background(Accent, CircleShape)
-                        .padding(horizontal = 7.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        text = chat.unread.toString(),
-                        color = Color.White,
-                        fontSize = 11.sp
-                    )
-                }
-            }
-        }
-    }
-
-    HorizontalDivider(
-        color = CardColor,
-        modifier = Modifier.padding(start = 80.dp)
-    )
-}
-
-@Composable
-fun EmptySection(title: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "$title скоро появятся",
-            color = SecondaryText,
-            fontSize = 16.sp
-        )
     }
 }
