@@ -132,7 +132,12 @@ private fun KayroMessRoot() {
         Surface(Modifier.fillMaxSize(), color = Page) {
             AnimatedContent(
                 targetState = active,
-                transitionSpec = { androidx.compose.animation.fadeIn(tween(160)) togetherWith androidx.compose.animation.fadeOut(tween(120)) },
+                transitionSpec = {
+    androidx.compose.animation.ContentTransform(
+        androidx.compose.animation.fadeIn(tween(160)),
+        androidx.compose.animation.fadeOut(tween(120))
+    )
+},
                 label = "screen"
             ) { chat ->
                 if (chat != null) {
@@ -479,6 +484,7 @@ private fun ActionRow(icon: String, label: String, fallback: String, onClick: ()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateChatSheet(onDismiss: () -> Unit, onCreate: (String, String) -> Unit) {
     var title by remember { mutableStateOf("") }
